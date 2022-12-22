@@ -55,4 +55,15 @@ public struct GrowattClient {
         return Configuration(data: data)
     }
 
+    /**
+     Read the current status of the device.
+     - Throws: `DataError`, if not enough bytes where received
+     - Throws: `ContentError`, if any register values could not be decoded
+     - Returns: The current status of the device
+     */
+    public func readStatus() async throws -> Status {
+        let data: [UInt16] = try await device.readInputRegisters(from: 0, count: 83)
+        return Status(data: data)
+    }
+
 }
