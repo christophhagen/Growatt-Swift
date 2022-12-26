@@ -42,6 +42,16 @@ public struct Configuration {
         self.standby = data.get(0) & 0xFF > 0
         self.pvInputMode = data.get()
     }
+
+    func write(to data: inout [UInt16]) {
+        utility.write(to: &data)
+        acOutput.write(to: &data)
+        battery.write(to: &data)
+        device.write(to: &data)
+        let value = data[0] | (standby ? 1 : 0)
+        data.write(value, at: 0)
+        data.write(pvInputMode)
+    }
 }
 
 
@@ -75,6 +85,14 @@ extension Configuration {
             case .unknown(let rawValue): return "Unknown (\(rawValue))"
             }
         }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .independent: return 0
+            case .parallel: return 1
+            case .unknown(let value): return value
+            }
+        }
     }
 }
 
@@ -90,5 +108,30 @@ extension Configuration: CustomStringConvertible {
         \(battery)
         \(device)
         """
+    }
+}
+
+extension Configuration: Codable {
+
+    enum CodingKeys: Int, CodingKey {
+        case utility = 1
+        case acOutput = 2
+        case battery = 3
+        case device = 4
+        case standby = 5
+        case pvInputMode = 6
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        var data = [UInt16](repeating: 0, count: 81)
+        write(to: &data)
+        try container.encode(data)
+    }
+
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let data = try container.decode([UInt16].self)
+        self.init(data: data)
     }
 }

@@ -139,6 +139,24 @@ extension Status.General {
             case .unknown(let rawValue): return "Unknown (\(rawValue))"
             }
         }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .standby: return 0
+            case .discharging: return 2
+            case .fault: return 3
+            case .flashing: return 4
+            case .pvCharging: return 5
+            case .acCharging: return 6
+            case .combinedCharging: return 7
+            case .combineChargeAndBypass: return 8
+            case .pvChargingAndBypass: return 9
+            case .acChargingAndBypass: return 10
+            case .bypass: return 11
+            case .pvChargingAndDischarge: return 12
+            case .unknown(let value): return value
+            }
+        }
     }
 }
 
@@ -304,6 +322,15 @@ extension Status.General {
             case .enabled: return "Enabled"
             case .clearFaultMode: return "Clear Fault Mode"
             case .unknown(let rawValue): return "Unknown (\(rawValue))"
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .disabled: return 0
+            case .enabled: return 1
+            case .clearFaultMode: return 2
+            case .unknown(let value): return value
             }
         }
     }

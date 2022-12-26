@@ -60,7 +60,7 @@ public struct DeviceConfiguration {
     init(data: [UInt16]) {
         self.firmwareVersion = data.string(in: 9...11)
         self.firmwareControlVersion = data.string(in: 12...14)
-        self.lcdLanguage = Language(data[15])
+        self.lcdLanguage = data.get()
         self.overTemperatureRestart = data.bool(at: 21)
         self.buzzerIsEnabled = data.bool(at: 22)
         self.serialNumber = data.string(in: 23...27)
@@ -71,17 +71,39 @@ public struct DeviceConfiguration {
         self.manufacturerInfo = data.string(in: 59...66)
         self.firmwareBuildNumber = data.string(in: 67...70)
         self.sysWeekly = data.integer(at: 72)
-        self.modbusVersion = Int(data[73])
-        self.factoryCode = Int(data[80])
+        self.modbusVersion = data.integer(at: 73)
+        self.factoryCode = data.integer(at: 80)
 
         self.ratedActivePower = data.float(uint32At: 76, scale: 10)
         self.ratedApparentPower = data.float(uint32At: 78, scale: 10)
+    }
+
+    func write(to data: inout [UInt16]) {
+        data.write(firmwareVersion, in: 9...11)
+        data.write(firmwareControlVersion, in: 12...14)
+        data.write(lcdLanguage)
+        data.write(overTemperatureRestart, at: 21)
+        data.write(buzzerIsEnabled, at: 22)
+        data.write(serialNumber, in: 23...27)
+        data.write(communicationAddress, at: 30)
+        data.write(firmwareStart)
+        data.write(deviceType.rawValue, at: 43)
+        if let systemTime {
+            data.write(systemTime, in: 45...50)
+        }
+        data.write(manufacturerInfo, in: 59...66)
+        data.write(firmwareBuildNumber, in: 67...70)
+        data.write(sysWeekly, at: 72)
+        data.write(modbusVersion, at: 73)
     }
 }
 
 extension DeviceConfiguration {
 
-    public enum Language: CustomStringConvertible {
+    public enum Language: CustomStringConvertible, DecodableRegister {
+
+        static let register = 15
+
         case english
         case unknown(rawValue: UInt16)
 
@@ -100,6 +122,14 @@ extension DeviceConfiguration {
                 self = .unknown(rawValue: value)
             }
         }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .english: return 0
+            case .unknown(let value): return value
+            }
+        }
+
     }
 }
 
@@ -130,6 +160,14 @@ extension DeviceConfiguration {
             case .controlBoard: return "Control Board"
             case .unknown(rawValue: let rawValue):
                 return "Unknown (\(rawValue))"
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .own: return 1
+            case .controlBoard: return 256
+            case .unknown(let value): return value
             }
         }
     }

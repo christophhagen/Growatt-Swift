@@ -58,3 +58,40 @@ extension RandomAccessCollection where Element == UInt16, Index == Int {
         return self[startIndex + index]
     }
 }
+
+extension MutableCollection where Element == UInt16, Index == Int {
+
+    mutating func write(_ value: String, in range: ClosedRange<Int>) {
+        write(value.raw, in: range)
+    }
+
+    mutating func write(_ values: [UInt16], in range: ClosedRange<Int>) {
+        for (offset, element) in values.prefix(range.count).enumerated() {
+            write(element, at: range.lowerBound + offset)
+        }
+    }
+
+    mutating func write<T>(_ value: T) where T: DecodableRegister {
+        write(value.rawValue, at: T.register)
+    }
+
+    mutating func write(_ value: UInt16, at index: Int) {
+        self[startIndex + index] = value
+    }
+
+    mutating func write(_ value: Float, at index: Int, scale: Float) {
+        write(value.raw(scale: scale), at: index)
+    }
+
+    mutating func write(_ value: Bool, at index: Int) {
+        write(value ? 1 : 0, at: index)
+    }
+
+    mutating func write(_ value: Int, at index: Int) {
+        write(UInt16(value), at: index)
+    }
+
+    mutating func write(_ value: Date, in range: ClosedRange<Int>) {
+        write(value.raw, in: range)
+    }
+}

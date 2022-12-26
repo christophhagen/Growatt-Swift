@@ -36,6 +36,14 @@ public struct UtilityConfiguration {
         self.chargeInterval = (chargeStartHour, chargeEndHour)
         self.acInputMode = data.get()
     }
+
+    func write(to data: inout [UInt16]) {
+        data.write(outputInterval.start, at: 3)
+        data.write(outputInterval.end, at: 4)
+        data.write(chargeInterval.start, at: 5)
+        data.write(chargeInterval.end, at: 6)
+        data.write(acInputMode)
+    }
 }
 
 
@@ -67,6 +75,14 @@ extension UtilityConfiguration {
             case .apl: return "APL (90-280 V)"
             case .ups: return "UPS (170-280 V)"
             case .unknown(let rawValue): return "Unknown (\(rawValue))"
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .apl: return 0
+            case .ups: return 1
+            case .unknown(let value): return value
             }
         }
     }

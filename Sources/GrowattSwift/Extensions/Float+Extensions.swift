@@ -13,6 +13,10 @@ extension Float {
         }
     }
 
+    func raw(scale: Float) -> UInt16 {
+        UInt16((self * scale).rounded())
+    }
+
     init(signedHigh high: UInt16, low: UInt16, scale: Float) {
         let unsigned = UInt32(high) << 16 + UInt32(low)
         let value = Int32(bitPattern: unsigned)

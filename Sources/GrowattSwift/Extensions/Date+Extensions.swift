@@ -15,4 +15,9 @@ extension Date {
         }
         self = date
     }
+
+    var raw: [UInt16] {
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
+        return [UInt16(components.year!), UInt16(components.month!), UInt16(components.day!), UInt16(components.hour!), UInt16(components.minute!), UInt16(components.second!)]
+    }
 }

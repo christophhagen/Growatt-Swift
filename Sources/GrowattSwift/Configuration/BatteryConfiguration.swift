@@ -65,6 +65,18 @@ public struct BatteryConfiguration {
         self.batteryLowVoltageToSwitchToUtility = data.float(at: 37, scale: 10)
         self.floatingChargeCurrent = data.float(at: 38, scale: 10)
     }
+
+    func write(to data: inout [UInt16]) {
+        data.write(chargeSource)
+        data.write(batteryType)
+        data.write(agingMode)
+
+        data.write(maximumChargeCurrent, at: 34, scale: 10)
+        data.write(bulkChargeVoltage, at: 35, scale: 10)
+        data.write(floatChargeVoltage, at: 36, scale: 10)
+        data.write(batteryLowVoltageToSwitchToUtility, at: 37, scale: 10)
+        data.write(floatingChargeCurrent, at: 38, scale: 10)
+    }
 }
 
 extension BatteryConfiguration {
@@ -94,6 +106,15 @@ extension BatteryConfiguration {
             case 1: self = .pvAndUtility
             case 2: self = .pvOnly
             default: self = .unknown(rawValue: rawValue)
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .pvFirst: return 0
+            case .pvAndUtility: return 1
+            case .pvOnly: return 2
+            case .unknown(let value): return value
             }
         }
 
@@ -149,6 +170,15 @@ extension BatteryConfiguration {
                 return "Unknown (\(rawValue))"
             }
         }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .leadAcid: return 0
+            case .lithium: return 1
+            case .customLeadAcid: return 2
+            case .unknown(let value): return value
+            }
+        }
     }
 }
 
@@ -185,6 +215,14 @@ extension BatteryConfiguration {
             case .aging: return "Aging"
             case .unknown(rawValue: let rawValue):
                 return "Unknown (\(rawValue))"
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .normal: return 0
+            case .aging: return 1
+            case .unknown(let value): return value
             }
         }
     }

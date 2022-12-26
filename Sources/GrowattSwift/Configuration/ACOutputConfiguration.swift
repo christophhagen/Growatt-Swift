@@ -35,6 +35,16 @@ public struct ACOutputConfiguration {
         self.overloadRestart = data.get()
         self.inverterModule = .init(register28: data.get(28), register29: data.get(29))
     }
+
+    func write(to data: inout [UInt16]) {
+        data.write(isEnabled ? 0x0100 : 0x0000, at: 0)
+        data.write(priority)
+        data.write(voltageType)
+        data.write(overloadRestart)
+        let value = inverterModule.rawValue
+        data.write(UInt16(value >> 16), at: 28)
+        data.write(UInt16(value & 0xFFFF), at: 29)
+    }
 }
 
 extension ACOutputConfiguration {
@@ -95,6 +105,15 @@ extension ACOutputConfiguration {
             }
         }
 
+        public var rawValue: UInt16 {
+            switch self {
+            case .battery: return 0
+            case .pv: return 1
+            case .utility: return 2
+            case.unknown(let value): return value
+            }
+        }
+
 
         public var description: String {
             switch self {
@@ -103,6 +122,17 @@ extension ACOutputConfiguration {
             case .utility: return "Utility"
             case .unknown(let value): return "Unknown (\(value))"
             }
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let value = try container.decode(UInt16.self)
+            self.init(value)
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(rawValue)
         }
     }
 }
@@ -131,6 +161,15 @@ extension ACOutputConfiguration {
                 self = .voltage240VAC
             default:
                 self = .unknown(rawValue)
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .voltage208VAC: return 0
+            case .voltage230VAC: return 1
+            case .voltage240VAC: return 2
+            case .unknown(let value): return value
             }
         }
 
@@ -172,6 +211,14 @@ extension ACOutputConfiguration {
             }
         }
 
+        public var rawValue: UInt16 {
+            switch self {
+            case .frequency50Hz: return 0
+            case .frequency60Hz: return 1
+            case .unknown(let value): return value
+            }
+        }
+
         public var description: String {
             switch self {
             case .frequency50Hz: return "50 Hz"
@@ -210,6 +257,15 @@ extension ACOutputConfiguration {
                 self = .switchToUtility
             default:
                 self = .unknown(rawValue)
+            }
+        }
+
+        public var rawValue: UInt16 {
+            switch self {
+            case .yes: return 0
+            case .no: return 1
+            case .switchToUtility: return 2
+            case .unknown(let value): return value
             }
         }
 
@@ -260,6 +316,12 @@ extension ACOutputConfiguration {
         public init(register28: UInt16, register29: UInt16) {
             // TODO: Understand register 28 and 29
             self = .unknown(high: register28, low: register29)
+        }
+
+        public var rawValue: UInt32 {
+            switch self {
+            case .unknown(let high, let low): return UInt32(high) << 16 | UInt32(low)
+            }
         }
 
         public var description: String {
