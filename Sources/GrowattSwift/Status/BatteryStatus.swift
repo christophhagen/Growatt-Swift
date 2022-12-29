@@ -58,6 +58,21 @@ extension Status {
             self.apparentDischargePower = data.float(uint32At: 75, scale: 10)
             self.power = data.float(int32At: 77, scale: 10)
         }
+
+        func write(to data: inout [UInt16]) {
+            data.write(overcharge, at: 80)
+            data.write(voltage, at: 17, scale: 100)
+            data.write(stateOfCharge, at: 18)
+            data.write(dcOutputVoltage, at: 24, scale: 10)
+            data.write(dcConverterTemperature, at: 26, scale: 10)
+            data.write(portVoltage, at: 28, scale: 100)
+            data.write(busVoltage, at: 29, scale: 100)
+            data.write(dischargeEnergyToday, asUint32At: 60, scale: 10)
+            data.write(dischargeEnergyTotal, asUint32At: 62, scale: 10)
+            data.write(dischargePower, asUint32At: 73, scale: 10)
+            data.write(apparentDischargePower, asUint32At: 75, scale: 10)
+            data.write(power, asInt32At: 77, scale: 10)
+        }
     }
 }
 

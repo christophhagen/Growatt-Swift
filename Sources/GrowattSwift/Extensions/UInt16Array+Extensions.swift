@@ -94,4 +94,21 @@ extension MutableCollection where Element == UInt16, Index == Int {
     mutating func write(_ value: Date, in range: ClosedRange<Int>) {
         write(value.raw, in: range)
     }
+
+    mutating func write(_ value: Float, asUint32At index: Int, scale: Float) {
+        let raw = UInt32((value * scale).rounded())
+        write(raw, at: index)
+    }
+
+    mutating func write(_ value: Float, asInt32At index: Int, scale: Float) {
+        let raw = UInt32(bitPattern: Int32((value * scale).rounded()))
+        write(raw, at: index)
+    }
+
+    private mutating func write(_ value: UInt32, at index: Int) {
+        let high = UInt16(value >> 16)
+        let low = UInt16(value & 0xFFFF)
+        write(high, at: index)
+        write(low, at: index + 1)
+    }
 }

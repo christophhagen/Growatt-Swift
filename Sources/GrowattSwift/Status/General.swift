@@ -39,6 +39,19 @@ extension Status {
             self.productionLineMode = data.get()
             self.constantPowerOK = data.bool(at: 47)
         }
+
+        func write(to data: inout [UInt16]) {
+            data.write(systemRunState)
+            data.write(Float(workTimeTotal), asUint32At: 30, scale: 2)
+            data.write(fault?.rawValue ?? 0, at: 40)
+            data.write(warning?.rawValue ?? 0, at: 41)
+            data.write(faultValue, at: 42)
+            data.write(warningValue, at: 43)
+            data.write(deviceType.rawValue, at: 44)
+            data.write(check?.rawValue ?? 0, at: 45)
+            data.write(productionLineMode)
+            data.write(constantPowerOK, at: 47)
+        }
     }
 }
 

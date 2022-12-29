@@ -31,6 +31,14 @@ public struct Status {
         self.acOutput = .init(data: data)
         self.battery = .init(data: data)
     }
+
+    func write(to data: inout [UInt16]) {
+        general.write(to: &data)
+        pv.write(to: &data)
+        acInput.write(to: &data)
+        acOutput.write(to: &data)
+        battery.write(to: &data)
+    }
 }
 
 extension Status: CustomStringConvertible {
@@ -43,5 +51,21 @@ extension Status: CustomStringConvertible {
         \(acOutput)
         \(battery)
         """
+    }
+}
+
+extension Status: Codable {
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        var data = [UInt16](repeating: 0, count: 81)
+        write(to: &data)
+        try container.encode(data)
+    }
+
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let data = try container.decode([UInt16].self)
+        self.init(data: data)
     }
 }

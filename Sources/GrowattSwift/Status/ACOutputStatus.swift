@@ -77,6 +77,26 @@ extension Status {
             self.apparentDischargePower = data.float(uint32At: 71, scale: 10)
             self.fanSpeedOfInverter = data.integer(at: 82)
         }
+
+        func write(to data: inout [UInt16]) {
+            data.write(buck1.current, at: 7, scale: 10)
+            data.write(buck1.temperature, at: 32, scale: 10)
+            data.write(buck2.current, at: 8, scale: 10)
+            data.write(buck2.temperature, at: 33, scale: 10)
+            data.write(activePower, asUint32At: 9, scale: 10)
+            data.write(apparentPower, asUint32At: 11, scale: 10)
+            data.write(outputVoltage, at: 22, scale: 10)
+            data.write(outputFrequency, at: 23, scale: 100)
+            data.write(inverterTemperature, at: 25, scale: 10)
+            data.write(loadPercentage, at: 27, scale: 10)
+            data.write(outputCurrent, at: 34, scale: 10)
+            data.write(inverterCurrent, at: 35, scale: 10)
+            data.write(dischargeEnergyToday, asUint32At: 64, scale: 10)
+            data.write(dischargeEnergyTotal, asUint32At: 66, scale: 10)
+            data.write(dischargePower, at: 69, scale: 10)
+            data.write(apparentDischargePower, asUint32At: 71, scale: 10)
+            data.write(fanSpeedOfInverter, at: 82)
+        }
     }
 }
 

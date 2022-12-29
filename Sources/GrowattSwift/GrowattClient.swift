@@ -66,4 +66,9 @@ public struct GrowattClient {
         return Status(data: data)
     }
 
+    public func readConfigurationRegister<T>() async throws -> T where T: ConfigurationRegister {
+        let range = T.requiredRegisters
+        let data: [UInt16] = try await device.readHoldingRegisters(from: range.lowerBound, count: range.count)
+        return try T.init(registerData: data)
+    }
 }

@@ -39,6 +39,18 @@ extension Status {
                 energyToday: data.float(uint32At: 52, scale: 10),
                 energyTotal: data.float(uint32At: 54, scale: 10))
         }
+
+        func write(to data: inout [UInt16]) {
+            data.write(fanSpeedOfMpptCharger, at: 81)
+            data.write(pv1.voltage, at: 1, scale: 10)
+            data.write(pv1.chargePower, asUint32At: 3, scale: 10)
+            data.write(pv1.energyToday, asUint32At: 48, scale: 10)
+            data.write(pv1.energyTotal, asUint32At: 50, scale: 10)
+            data.write(pv2.voltage, at: 2, scale: 10)
+            data.write(pv2.chargePower, asUint32At: 5, scale: 10)
+            data.write(pv2.energyToday, asUint32At: 52, scale: 10)
+            data.write(pv2.energyTotal, asUint32At: 54, scale: 10)
+        }
     }
 }
 

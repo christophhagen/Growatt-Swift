@@ -46,6 +46,19 @@ extension Status {
             self.chargeEnergyTotal = data.float(uint32At: 58, scale: 10)
             self.batteryChargeCurrent = data.float(uint32At: 68, scale: 10)
         }
+
+        func write(to data: inout [UInt16]) {
+            data.write(chargePower, asUint32At: 13, scale: 10)
+            data.write(apparentChargePower, asUint32At: 15, scale: 10)
+            data.write(busVoltage, at: 19, scale: 10)
+            data.write(inputVoltage, at: 20, scale: 10)
+            data.write(inputFrequency, at: 21, scale: 100)
+            data.write(inputPower, at: 36, scale: 10)
+            data.write(apparentInputPower, asUint32At: 38, scale: 10)
+            data.write(chargeEnergyToday, asUint32At: 56, scale: 10)
+            data.write(chargeEnergyTotal, asUint32At: 58, scale: 10)
+            data.write(batteryChargeCurrent, asUint32At: 68, scale: 10)
+        }
     }
 }
 
