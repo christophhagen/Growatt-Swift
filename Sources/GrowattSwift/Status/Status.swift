@@ -2,15 +2,15 @@ import Foundation
 
 public struct Status {
 
-    let general: General
+    let general: GeneralStatus
 
-    let pv: PV
+    let pv: PVStatus
 
-    let acInput: ACInput
+    let acInput: ACInputStatus
 
-    let acOutput: ACOutput
+    let acOutput: ACOutputStatus
 
-    let battery: Battery
+    let battery: BatteryStatus
 
     /**
      Decode the current device status from modbus data.
@@ -68,4 +68,8 @@ extension Status: Codable {
         let data = try container.decode([UInt16].self)
         self.init(data: data)
     }
+}
+
+extension Status: Equatable {
+    
 }

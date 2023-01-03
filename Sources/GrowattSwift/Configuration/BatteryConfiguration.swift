@@ -84,7 +84,7 @@ extension BatteryConfiguration {
     /**
      The configuration for the source for battery charging
      */
-    public enum ChargeSource: DecodableRegister, CustomStringConvertible {
+    public enum ChargeSource: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 2
 
@@ -136,7 +136,7 @@ extension BatteryConfiguration {
      The battery type.
      - Note: Can only be set in standby mode.
      */
-    public enum BatteryType: DecodableRegister, CustomStringConvertible {
+    public enum BatteryType: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 39
 
@@ -188,7 +188,7 @@ extension BatteryConfiguration {
      The aging mode.
      - Note: Can only be set in standby mode.
      */
-    public enum AgingMode: DecodableRegister, CustomStringConvertible {
+    public enum AgingMode: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 40
 
@@ -243,4 +243,8 @@ extension BatteryConfiguration: CustomStringConvertible {
           Switch to Utility Voltage: \(batteryLowVoltageToSwitchToUtility) V
         """
     }
+}
+
+extension BatteryConfiguration: Equatable {
+
 }

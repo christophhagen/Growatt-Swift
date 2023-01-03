@@ -17,7 +17,7 @@ public enum DeviceType {
     /** Unknown device */
     case unknown(UInt16)
 
-    public enum Inverter {
+    public enum Inverter: Equatable {
         /** 1 tracker and 1phase Grid connect PV inverter TL */
         case oneTrackerOnePhaseTL(UInt16)
         /** 2 tracker and 1phase Grid connect PV inverter TL */
@@ -126,3 +126,6 @@ public enum DeviceType {
     }
 }
 
+extension DeviceType: Equatable {
+
+}

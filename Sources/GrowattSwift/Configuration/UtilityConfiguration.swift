@@ -16,7 +16,7 @@ public struct UtilityConfiguration {
      Use 4 digits to represent the time period, the upper two digits represent the time when inverter start to power the load, setting range from 00 to 23, and the lower two digits represent the time when inverter end to power the load, setting range from 00 to 23.
      (eg: 2320 represents the time allows inverter to power the load is from 23:00 to the next day 20:59, and the inverter AC output power is prohibited outside of this period)
      */
-    public let outputInterval: (start: Int, end: Int)
+    public let outputInterval: Interval
 
     /**
      The time allowed for utility to charge the battery.
@@ -25,31 +25,46 @@ public struct UtilityConfiguration {
      The upper limit represents the time when utility end to charge the battery, setting range from 00 to 23.
      (eg: 2320 represents the time allows utility to charge the battery is from 23:00 to the next day 20:59, and the utility charging is prohibited outside of this period)
      */
-    public let chargeInterval: (start: Int, end: Int)
+    public let chargeInterval: Interval
 
     init(data: [UInt16]) {
         let outputStartHour = data.integer(at: 3)
         let outputEndHour = data.integer(at: 4)
-        self.outputInterval = (outputStartHour, outputEndHour)
+        self.outputInterval = .init(startHour: outputStartHour, endHour: outputEndHour)
         let chargeStartHour = data.integer(at: 5)
         let chargeEndHour = data.integer(at: 6)
-        self.chargeInterval = (chargeStartHour, chargeEndHour)
+        self.chargeInterval = .init(startHour: chargeStartHour, endHour: chargeEndHour)
         self.acInputMode = data.get()
     }
 
     func write(to data: inout [UInt16]) {
-        data.write(outputInterval.start, at: 3)
-        data.write(outputInterval.end, at: 4)
-        data.write(chargeInterval.start, at: 5)
-        data.write(chargeInterval.end, at: 6)
+        data.write(outputInterval.startHour, at: 3)
+        data.write(outputInterval.endHour, at: 4)
+        data.write(chargeInterval.startHour, at: 5)
+        data.write(chargeInterval.endHour, at: 6)
         data.write(acInputMode)
+    }
+}
+
+extension UtilityConfiguration {
+
+    public struct Interval: Codable, Equatable {
+
+        public let startHour: Int
+
+        public let endHour: Int
+
+        public init(startHour: Int, endHour: Int) {
+            self.startHour = startHour
+            self.endHour = endHour
+        }
     }
 }
 
 
 extension UtilityConfiguration {
 
-    public enum ACInputMode: DecodableRegister, CustomStringConvertible {
+    public enum ACInputMode: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 8
 
@@ -94,8 +109,12 @@ extension UtilityConfiguration: CustomStringConvertible {
         """
         Utility
           AC Input Mode: \(acInputMode)
-          Output interval: \(outputInterval.start):00 - \(outputInterval.end):00
-          Charge interval: \(chargeInterval.start):00 - \(chargeInterval.end):00
+          Output interval: \(outputInterval.startHour):00 - \(outputInterval.endHour):00
+          Charge interval: \(chargeInterval.startHour):00 - \(chargeInterval.endHour):00
         """
     }
+}
+
+extension UtilityConfiguration: Equatable {
+    
 }

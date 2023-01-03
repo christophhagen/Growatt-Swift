@@ -1,64 +1,61 @@
 import Foundation
 
-extension Status {
+public struct GeneralStatus {
 
-    struct General {
-        
-        let systemRunState: SystemStatus
+    public let systemRunState: SystemStatus
 
-        /** Work time total (s) */
-        let workTimeTotal: TimeInterval
+    /** Work time total (s) */
+    public let workTimeTotal: TimeInterval
 
-        let fault: OffGridInverterFault?
+    public let fault: OffGridInverterFault?
 
-        let warning: OffGridInverterWarning?
+    public let warning: OffGridInverterWarning?
 
-        let faultValue: UInt16
+    public let faultValue: UInt16
 
-        let warningValue: UInt16
+    public let warningValue: UInt16
 
-        let deviceType: DeviceType
+    public let deviceType: DeviceType
 
-        let check: ChargePowerCheck?
+    public let check: ChargePowerCheck?
 
-        let productionLineMode: ProductionLineMode
+    public let productionLineMode: ProductionLineMode
 
-        /** Constant Power OK Flag */
-        let constantPowerOK: Bool
+    /** Constant Power OK Flag */
+    public let constantPowerOK: Bool
 
-        init(data: [UInt16]) {
-            self.systemRunState = data.get()
+    init(data: [UInt16]) {
+        self.systemRunState = data.get()
 
-            self.workTimeTotal = TimeInterval(data.float(uint32At: 30, scale: 2))
-            self.fault = OffGridInverterFault(rawValue: data[40])
-            self.warning = OffGridInverterWarning(rawValue: data[41])
-            self.faultValue = data[42]
-            self.warningValue = data[43]
-            self.deviceType = DeviceType(data[44])
-            self.check = ChargePowerCheck(rawValue: data[45])
-            self.productionLineMode = data.get()
-            self.constantPowerOK = data.bool(at: 47)
-        }
+        self.workTimeTotal = TimeInterval(data.float(uint32At: 30, scale: 2))
+        self.fault = OffGridInverterFault(rawValue: data[40])
+        self.warning = OffGridInverterWarning(rawValue: data[41])
+        self.faultValue = data[42]
+        self.warningValue = data[43]
+        self.deviceType = DeviceType(data[44])
+        self.check = ChargePowerCheck(rawValue: data[45])
+        self.productionLineMode = data.get()
+        self.constantPowerOK = data.bool(at: 47)
+    }
 
-        func write(to data: inout [UInt16]) {
-            data.write(systemRunState)
-            data.write(Float(workTimeTotal), asUint32At: 30, scale: 2)
-            data.write(fault?.rawValue ?? 0, at: 40)
-            data.write(warning?.rawValue ?? 0, at: 41)
-            data.write(faultValue, at: 42)
-            data.write(warningValue, at: 43)
-            data.write(deviceType.rawValue, at: 44)
-            data.write(check?.rawValue ?? 0, at: 45)
-            data.write(productionLineMode)
-            data.write(constantPowerOK, at: 47)
-        }
+    func write(to data: inout [UInt16]) {
+        data.write(systemRunState)
+        data.write(Float(workTimeTotal), asUint32At: 30, scale: 2)
+        data.write(fault?.rawValue ?? 0, at: 40)
+        data.write(warning?.rawValue ?? 0, at: 41)
+        data.write(faultValue, at: 42)
+        data.write(warningValue, at: 43)
+        data.write(deviceType.rawValue, at: 44)
+        data.write(check?.rawValue ?? 0, at: 45)
+        data.write(productionLineMode)
+        data.write(constantPowerOK, at: 47)
     }
 }
 
 
-extension Status.General: CustomStringConvertible {
+extension GeneralStatus: CustomStringConvertible {
 
-    var description: String {
+    public var description: String {
         """
         General
           System State: \(systemRunState)
@@ -73,9 +70,9 @@ extension Status.General: CustomStringConvertible {
     }
 }
 
-extension Status.General {
+extension GeneralStatus {
 
-    enum SystemStatus: DecodableRegister, CustomStringConvertible {
+    public enum SystemStatus: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 0
 
@@ -135,7 +132,7 @@ extension Status.General {
             }
         }
 
-        var description: String {
+        public var description: String {
             switch self {
             case .standby: return "Standby"
             case .discharging: return "Discharging"
@@ -173,9 +170,9 @@ extension Status.General {
     }
 }
 
-extension Status.General {
+extension GeneralStatus {
 
-    enum OffGridInverterFault: UInt16, CustomStringConvertible {
+    public enum OffGridInverterFault: UInt16, CustomStringConvertible, Equatable {
         case cpuAtoBCommunicationError = 2 // 0x00000002
         case batterySampleInconsistent = 3 // 0x00000004
         case buckOvercurrent = 4 // 0x00000008
@@ -196,7 +193,7 @@ extension Status.General {
         case lithiumBatteryOverload = 27 // 0x04000000
         case outputVoltageHigh = 28 // 0x08000000
 
-        var description: String {
+        public var description: String {
             switch self {
             case .cpuAtoBCommunicationError:
                 return "CPU A to B Communication"
@@ -241,9 +238,9 @@ extension Status.General {
     }
 }
 
-extension Status.General {
+extension GeneralStatus {
 
-    enum OffGridInverterWarning: UInt16, CustomStringConvertible {
+    public enum OffGridInverterWarning: UInt16, CustomStringConvertible, Equatable {
         case batteryVoltageLowWarning = 0 // 0x0001
         case overtemperatureWarning = 1 // 0x0002
         case overloadWarning = 2 // 0x0004
@@ -255,7 +252,7 @@ extension Status.General {
         case lithiumBatteryAgingWarning = 9 // 0x0100
         case fanLockWarning = 10 // 0x0200
 
-        var description: String {
+        public var description: String {
             switch self {
             case .batteryVoltageLowWarning:
                 return "Low Battery Voltage"
@@ -282,9 +279,9 @@ extension Status.General {
     }
 }
 
-extension Status.General {
+extension GeneralStatus {
 
-    enum ChargePowerCheck: UInt16, CustomStringConvertible {
+    public enum ChargePowerCheck: UInt16, CustomStringConvertible {
         /** PV1 charge power check */
         case pv1 = 1
         /** PV2 charge power check */
@@ -292,7 +289,7 @@ extension Status.General {
         /** AC charge Power check */
         case ac = 3
 
-        var description: String {
+        public var description: String {
             switch self {
             case .pv1: return "PV1 Charge Power Check"
             case .pv2: return "PV2 Charge Power Check"
@@ -302,10 +299,10 @@ extension Status.General {
     }
 }
 
-extension Status.General {
+extension GeneralStatus {
 
     /** Production Line Mode */
-    enum ProductionLineMode: DecodableRegister, CustomStringConvertible {
+    public enum ProductionLineMode: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 46
 
@@ -329,7 +326,7 @@ extension Status.General {
             }
         }
 
-        var description: String {
+        public var description: String {
             switch self {
             case .disabled: return "Disabled"
             case .enabled: return "Enabled"
@@ -347,4 +344,8 @@ extension Status.General {
             }
         }
     }
+}
+
+extension GeneralStatus: Equatable {
+
 }

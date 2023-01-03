@@ -57,7 +57,7 @@ public struct Configuration {
 
 extension Configuration {
 
-    public enum PVInputMode: DecodableRegister, CustomStringConvertible {
+    public enum PVInputMode: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 7
 
@@ -134,4 +134,8 @@ extension Configuration: Codable {
         let data = try container.decode([UInt16].self)
         self.init(data: data)
     }
+}
+
+extension Configuration: Equatable {
+
 }

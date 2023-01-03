@@ -100,7 +100,7 @@ public struct DeviceConfiguration {
 
 extension DeviceConfiguration {
 
-    public enum Language: CustomStringConvertible, DecodableRegister {
+    public enum Language: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 15
 
@@ -135,7 +135,7 @@ extension DeviceConfiguration {
 
 extension DeviceConfiguration {
 
-    public enum FirmwareStart: DecodableRegister, CustomStringConvertible {
+    public enum FirmwareStart: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 31
 
@@ -195,6 +195,10 @@ extension DeviceConfiguration: CustomStringConvertible {
           Modbus version: \(modbusVersion)
         """
     }
+}
+
+extension DeviceConfiguration: Equatable {
+
 }
 
 private var df: DateFormatter = {

@@ -51,7 +51,7 @@ extension ACOutputConfiguration {
 
     // TODO: Check for values of SBU and SUB
     /** The configuration for the AC output */
-    public enum Priority: DecodableRegister, CustomStringConvertible {
+    public enum Priority: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 1
 
@@ -140,7 +140,7 @@ extension ACOutputConfiguration {
 extension ACOutputConfiguration {
 
     /** The voltage setting of the AC output */
-    public enum Voltage: DecodableRegister, CustomStringConvertible {
+    public enum Voltage: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 18
 
@@ -187,7 +187,7 @@ extension ACOutputConfiguration {
 extension ACOutputConfiguration {
 
     /** The frequency setting of the AC output */
-    public enum Frequency: DecodableRegister, CustomStringConvertible {
+    public enum Frequency: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register = 19
 
@@ -232,7 +232,7 @@ extension ACOutputConfiguration {
 extension ACOutputConfiguration {
 
     /** The behaviour when an overload is detected */
-    public enum OverloadRestart: DecodableRegister, CustomStringConvertible {
+    public enum OverloadRestart: DecodableRegister, CustomStringConvertible, Equatable {
 
         static let register: Int = 20
 
@@ -286,7 +286,7 @@ extension ACOutputConfiguration {
     /** The inverter module type
      - Warning: The model is currently not decoded correctly
      */
-    public enum InverterModule: CustomStringConvertible {
+    public enum InverterModule: CustomStringConvertible, Equatable {
         /**
          Documentation is not clear:
 
@@ -345,4 +345,8 @@ extension ACOutputConfiguration: CustomStringConvertible {
           Inverter: \(inverterModule)
         """
     }
+}
+
+extension ACOutputConfiguration: Equatable {
+
 }
